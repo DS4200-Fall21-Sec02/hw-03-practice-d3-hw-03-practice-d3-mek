@@ -1,5 +1,8 @@
 // write your javascript code here.
 // feel free to change the preset attributes as you see fit
+// References: https://www.d3-graph-gallery.com/graph/scatter_basic.html   
+// https://www.d3-graph-gallery.com/graph/barplot_grouped_basicWide.html
+
 
 let margin = {
     top: 60,
@@ -20,18 +23,18 @@ let svg1 = d3.select('#vis1')
   .attr('viewBox', [0, 0, width + margin.left + margin.right, height + margin.top + margin.bottom].join(' '))
 
 
-// Parse the Data
+// Extract the Data
 let census = d3.csv("data/OlympicMedals.csv")
 census.then(function(data) {
 
-  // List of subgroups = header of the csv files = soil condition here
+  // List of subgroups
   var subgroups = data.columns.slice(1)
 
-  // List of groups = species here = value of the first column called group -> I show them on the X axis
+  // List of countries
   var countries = new Map(data, function(d){return(d.Country)}).keys()
 
-// SVG
-  var svg = svg1.append('svg')
+
+ var svg = svg1.append('svg')
       .attr('height',height + margin.top + margin.bottom)
       .attr('width',width + margin.left + margin.right)
     .append('g')
@@ -39,36 +42,35 @@ census.then(function(data) {
 
 
 
-
-
-  // Add X axis
+  // X axis
   var x = d3.scaleBand()
       .domain(countries)
       .range([0, width])
       .padding([0.2])
   svg.append("g")
     .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(x).tickSize(0));
+    .call(d3.axisBottom(x));
 
-  // Add Y axis
+  //Y axis
   var y = d3.scaleLinear()
     .domain([0, 50])
     .range([ height, 0 ]);
   svg.append("g")
+    .style("font", "28px times")   
     .call(d3.axisLeft(y));
 
-  // Another scale for subgroup position?
+  // scale for subgroup
   var xSubgroup = d3.scaleBand()
     .domain(subgroups)
     .range([0, x.bandwidth()])
     .padding([0.05])
 
-  // color palette = one color per subgroup
+  // color
   var color = d3.scaleOrdinal()
     .domain(subgroups)
     .range(['#ffd700','#c0c0c0','#cd7f32'])
 
-  // Show the bars
+  // Show the bar
   svg.append("g")
     .selectAll("g")
     // Enter in data = loop group per group
@@ -100,23 +102,32 @@ let svg2 = d3.select('#vis2')
 let census2 = d3.csv("data/AAPL.csv")
 census2.then(function(data) {
 
-  // Add X axis
+
+var svg3 = svg2.append('svg')
+      .attr('height',height + margin.top + margin.bottom)
+      .attr('width',width + margin.left + margin.right)
+    .append('g')
+      .attr('transform','translate(' + margin.left + ',' + margin.top + ')')
+
+  // X axis
   var x = d3.scaleLinear()
     .domain([0, 30])
     .range([ 0, width ]);
-  svg2.append("g")
+  svg3.append("g")
     .attr("transform", "translate(0," + height + ")")
+    .style("font", "28px times") 
     .call(d3.axisBottom(x));
 
-  // Add Y axis
+  // Y axis
   var y = d3.scaleLinear()
     .domain([0, 300])
     .range([ height, 0]);
-  svg2.append("g")
+  svg3.append("g")
+    .style("font", "28px times")
     .call(d3.axisLeft(y));
 
-  // Add dots
-  svg2.append('g')
+  //dots
+  svg3.append('g')
     .selectAll("dot")
     .data(data)
     .enter()
@@ -124,6 +135,6 @@ census2.then(function(data) {
       .attr("cx", function (d) { return x(d.date); } )
       .attr("cy", function (d) { return y(d.close); } )
       .attr("r", 30)
-      .style("fill", "#69b3a2")
+      .style("fill", "#0000FF")
 
 })
