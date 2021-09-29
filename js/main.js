@@ -28,7 +28,7 @@ census.then(function(data) {
   var subgroups = data.columns.slice(1)
 
   // List of groups = species here = value of the first column called group -> I show them on the X axis
-  var countries = new Map(data, function(d){return(d.country)}).keys()
+  var countries = new Map(data, function(d){return(d.Country)}).keys()
 
 // SVG
   var svg = svg1.append('svg')
@@ -75,7 +75,7 @@ census.then(function(data) {
     .data(data)
     .enter()
     .append("g")
-      .attr("transform", function(d) { return "translate(" + x(d.country) + ",0)"; })
+      .attr("transform", function(d) { return "translate(" + x(d.Country) + ",0)"; })
     .selectAll("rect")
     .data(function(d) { return subgroups.map(function(key) { return {key: key, value: d[key]}; }); })
     .enter().append("rect")
@@ -95,3 +95,35 @@ let svg2 = d3.select('#vis2')
   .attr('width', '100%') // this is now required by Chrome to ensure the SVG shows up at all
   .style('background-color', '#ccc') // change the background color to light gray
   .attr('viewBox', [0, 0, width + margin.left + margin.right, height + margin.top + margin.bottom].join(' '))
+
+//Read the data
+let census2 = d3.csv("data/AAPL.csv")
+census2.then(function(data) {
+
+  // Add X axis
+  var x = d3.scaleLinear()
+    .domain([0, 30])
+    .range([ 0, width ]);
+  svg2.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x));
+
+  // Add Y axis
+  var y = d3.scaleLinear()
+    .domain([0, 300])
+    .range([ height, 0]);
+  svg2.append("g")
+    .call(d3.axisLeft(y));
+
+  // Add dots
+  svg2.append('g')
+    .selectAll("dot")
+    .data(data)
+    .enter()
+    .append("circle")
+      .attr("cx", function (d) { return x(d.date); } )
+      .attr("cy", function (d) { return y(d.close); } )
+      .attr("r", 30)
+      .style("fill", "#69b3a2")
+
+})
