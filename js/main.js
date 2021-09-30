@@ -1,102 +1,95 @@
 // write your javascript code here.
 // feel free to change the preset attributes as you see fit
-// References: https://www.d3-graph-gallery.com/graph/scatter_basic.html   
+// References/Resources: https://www.d3-graph-gallery.com/graph/scatter_basic.html   
 // https://www.d3-graph-gallery.com/graph/barplot_grouped_basicWide.html
 
 
+// write your javascript code here.
+// feel free to change the preset attributes as you see fit
+
+
+// set the dimensions and margins of the graph
 let margin = {
-    top: 60,
-    left: 50,
-    right: 30,
-    bottom: 35
-  },
-  width = 2000 - margin.left - margin.right,
-  height = 2000 - margin.top - margin.bottom;
+  top: 60,
+  left: 50,
+  right: 30,
+  bottom: 35
+},
+width = 4000 - margin.left - margin.right,
+height = 1000 - margin.top - margin.bottom;
 
+// append the svg object to the body of the page
+const svg1 = d3.select("#vis1")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",`translate(${margin.left},${margin.top})`);
 
-// first visualization
-let svg1 = d3.select('#vis1')
-  .append('svg')
-  .attr('preserveAspectRatio', 'xMidYMid meet') // this will scale your visualization according to the size of its parent element and the page.
-  .attr('width', '100%') // this is now required by Chrome to ensure the SVG shows up at all
-  .style('background-color', '#ccc') // change the background color to light gray
-  .attr('viewBox', [0, 0, width + margin.left + margin.right, height + margin.top + margin.bottom].join(' '))
+// Parse the Data
+d3.csv("data/OlympicMedals.csv").then( function(data) {
 
+  // List of subgroups = header of the csv files = soil condition here
+  const subgroups = data.columns.slice(1)
 
-// Extract the Data
-let census = d3.csv("data/OlympicMedals.csv")
-census.then(function(data) {
+  // List of groups = species here = value of the first column called group -> I show them on the X axis
+  const groups = data.map(d => d.Country)
 
-  // List of subgroups
-  var subgroups = data.columns.slice(1)
+  console.log(groups)
 
-  // List of countries
-  var countries = new Map(data, function(d){return(d.Country)}).keys()
-
-
- var svg = svg1.append('svg')
-      .attr('height',height + margin.top + margin.bottom)
-      .attr('width',width + margin.left + margin.right)
-    .append('g')
-      .attr('transform','translate(' + margin.left + ',' + margin.top + ')')
-
-
-
-  // X axis
-  var x = d3.scaleBand()
-      .domain(countries)
-      .range([0, width])
+  // Add X axis
+  const x = d3.scaleBand()
+      .domain(groups)
+      .range([0, width/7.5])
       .padding([0.2])
-  svg.append("g")
-    .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(x));
+  svg1.append("g")
+    .attr("transform", `translate(0, ${height})`)
+    .call(d3.axisBottom(x).tickSize(0));
 
-  //Y axis
-  var y = d3.scaleLinear()
+  // Add Y axis
+  const y = d3.scaleLinear()
     .domain([0, 50])
     .range([ height, 0 ]);
-  svg.append("g")
-    .style("font", "28px times")   
+  svg1.append("g")
     .call(d3.axisLeft(y));
 
-  // scale for subgroup
-  var xSubgroup = d3.scaleBand()
+  // Another scale for subgroup position?
+  const xSubgroup = d3.scaleBand()
     .domain(subgroups)
     .range([0, x.bandwidth()])
     .padding([0.05])
 
-  // color
-  var color = d3.scaleOrdinal()
+  // color palette = one color per subgroup
+  const color = d3.scaleOrdinal()
     .domain(subgroups)
     .range(['#ffd700','#c0c0c0','#cd7f32'])
 
-  // Show the bar
-  svg.append("g")
+  // Show the bars
+  svg1.append("g")
     .selectAll("g")
     // Enter in data = loop group per group
     .data(data)
-    .enter()
-    .append("g")
-      .attr("transform", function(d) { return "translate(" + x(d.Country) + ",0)"; })
+    .join("g")
+      .attr("transform", d => `translate(${x(d.Country)}, 0)`)
     .selectAll("rect")
     .data(function(d) { return subgroups.map(function(key) { return {key: key, value: d[key]}; }); })
-    .enter().append("rect")
-      .attr("x", function(d) { return xSubgroup(d.key); })
-      .attr("y", function(d) { return y(d.value); })
+    .join("rect")
+      .attr("x", d => xSubgroup(d.key))
+      .attr("y", d => y(d.value))
       .attr("width", xSubgroup.bandwidth())
-      .attr("height", function(d) { return height - y(d.value); })
-      .attr("fill", function(d) { return color(d.key); });
+      .attr("height", d => height - y(d.value))
+      .attr("fill", d => color(d.key));
 
 })
-
-
 // second visualization
+width2 = 2000 - margin.left - margin.right,
+height2 = 1000 - margin.top - margin.bottom;
+
 let svg2 = d3.select('#vis2')
   .append('svg')
-  .attr('preserveAspectRatio', 'xMidYMid meet') // this will scale your visualization according to the size of its parent element and the page.
-  .attr('width', '100%') // this is now required by Chrome to ensure the SVG shows up at all
+  .attr('width2', '100%') // this is now required by Chrome to ensure the SVG shows up at all
   .style('background-color', '#ccc') // change the background color to light gray
-  .attr('viewBox', [0, 0, width + margin.left + margin.right, height + margin.top + margin.bottom].join(' '))
+  .attr('viewBox', [0, 0, width2 + margin.left + margin.right, height2 + margin.top + margin.bottom].join(' '))
 
 //Read the data
 let census2 = d3.csv("data/AAPL.csv")
@@ -104,24 +97,24 @@ census2.then(function(data) {
 
 
 var svg3 = svg2.append('svg')
-      .attr('height',height + margin.top + margin.bottom)
-      .attr('width',width + margin.left + margin.right)
+      .attr('height',height2 + margin.top + margin.bottom)
+      .attr('width',width2 + margin.left + margin.right)
     .append('g')
       .attr('transform','translate(' + margin.left + ',' + margin.top + ')')
 
   // X axis
   var x = d3.scaleLinear()
     .domain([0, 30])
-    .range([ 0, width ]);
+    .range([ 0, width2 ]);
   svg3.append("g")
-    .attr("transform", "translate(0," + height + ")")
+    .attr("transform", "translate(0," + height2 + ")")
     .style("font", "28px times") 
     .call(d3.axisBottom(x));
 
   // Y axis
   var y = d3.scaleLinear()
     .domain([0, 300])
-    .range([ height, 0]);
+    .range([ height2, 0]);
   svg3.append("g")
     .style("font", "28px times")
     .call(d3.axisLeft(y));
@@ -134,7 +127,7 @@ var svg3 = svg2.append('svg')
     .append("circle")
       .attr("cx", function (d) { return x(d.date); } )
       .attr("cy", function (d) { return y(d.close); } )
-      .attr("r", 30)
+      .attr("r", 25)
       .style("fill", "#0000FF")
 
 })
