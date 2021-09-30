@@ -29,10 +29,10 @@ const svg1 = d3.select("#vis1")
 // Parse the Data
 d3.csv("data/OlympicMedals.csv").then( function(data) {
 
-  // List of subgroups = header of the csv files = soil condition here
+  // List of subgroups = header of the csv files i.ei. gold, medal, bronze
   const subgroups = data.columns.slice(1)
 
-  // List of groups = species here = value of the first column called group -> I show them on the X axis
+  // List of groups = countries 
   const groups = data.map(d => d.Country)
 
   console.log(groups)
@@ -53,13 +53,13 @@ d3.csv("data/OlympicMedals.csv").then( function(data) {
   svg1.append("g")
     .call(d3.axisLeft(y));
 
-  // Another scale for subgroup position?
+  // Another scale for subgroup position
   const xSubgroup = d3.scaleBand()
     .domain(subgroups)
     .range([0, x.bandwidth()])
     .padding([0.05])
 
-  // color palette = one color per subgroup
+  // color palette = one color per subgroup (the colors are the colors of the medals)
   const color = d3.scaleOrdinal()
     .domain(subgroups)
     .range(['#ffd700','#c0c0c0','#cd7f32'])
@@ -92,8 +92,8 @@ let svg2 = d3.select('#vis2')
   .attr('viewBox', [0, 0, width2 + margin.left + margin.right, height2 + margin.top + margin.bottom].join(' '))
 
 //Read the data
-let census2 = d3.csv("data/AAPL.csv")
-census2.then(function(data) {
+let stock = d3.csv("data/AAPL.csv")
+stock.then(function(data) {
 
 
 var svg3 = svg2.append('svg')
