@@ -119,6 +119,14 @@ var svg3 = svg2.append('svg')
     .style("font", "28px times")
     .call(d3.axisLeft(y));
 
+var tooltip = d3.select("#vis2")
+    .append("div")
+    .style("position", "absolute")
+    .style("z-index", "10")
+    .style("visibility", "hidden")
+    .style("background", "#000")
+    .text("tooltip");
+
   //dots
   svg3.append('g')
     .selectAll("dot")
@@ -129,5 +137,8 @@ var svg3 = svg2.append('svg')
       .attr("cy", function (d) { return y(d.close); } )
       .attr("r", 25)
       .style("fill", "#0000FF")
+.on("mouseover", function(d){tooltip.text(d.close); return tooltip.style("visibility", "visible");})
+
+
 
 })
